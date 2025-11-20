@@ -1,0 +1,5 @@
+{
+  "name": "AirBeam Lab AI CS Chatbot",
+  "description": "An AI-powered customer service chatbot for 'AirBeam Lab'. It uses a simulated vector database built from a comprehensive company knowledge base on air quality sensors and policies, and uses GPT-4o to generate context-aware answers.",
+  "requestFramePermissions": []
+}
