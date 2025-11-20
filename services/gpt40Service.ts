@@ -16,7 +16,7 @@ const getChatCompletion = async (messages: ChatMessageParam[], model: string = "
     body.response_format = { type: "json_object" };
   }
 
-  const response = await fetch(`${API_BASE_URL}/api/chat/completions`, {
+  const response = await fetch(`${API_BASE_URL}/chat-completions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -123,7 +123,7 @@ export const generateKnowledgeBaseJSON = async (rawText: string): Promise<Intent
   const prompt = KNOWLEDGE_JSON_PROMPT.replace('{RAW_TEXT}', rawText);
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/generate-knowledge`, {
+    const response = await fetch(`${API_BASE_URL}/generate-knowledge`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
