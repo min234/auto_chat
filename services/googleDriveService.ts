@@ -10,7 +10,7 @@ const fetchGoogleApiConfig = async () => {
   if (_googleApiKey && _googleClientId) return; // Already fetched
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/google-config`);
+    const response = await fetch(`${API_BASE_URL}/google-config`);
     if (!response.ok) {
       throw new Error('Failed to fetch Google API config from backend.');
     }
@@ -44,7 +44,7 @@ export const initGoogleClients = async () => {
  */
 export const handleAuthClick = async (): Promise<void> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/google-drive/auth/url`);
+    const response = await fetch(`${API_BASE_URL}/google-drive-auth-url`);
     if (!response.ok) {
       throw new Error('Failed to get Google auth URL from backend.');
     }
@@ -123,7 +123,7 @@ export const showPicker = (accessToken: string): Promise<any> => {
  */
 export const getFileContent = async (fileId: string, mimeType: string, accessToken: string): Promise<string[]> => {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/google-drive/file-content`, {
+        const response = await fetch(`${API_BASE_URL}/google-drive-file-content`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
