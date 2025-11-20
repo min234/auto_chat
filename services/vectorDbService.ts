@@ -6,10 +6,10 @@ import { getVectorStore, setVectorStore, getKnowledge, setKnowledge } from './db
 const activeDocumentVectors = new Map<string, VectorStore>();
 const activeDocuments = new Map<string, Document[]>();
 
-const API_BASE_URL = 'http://localhost:3001';
+const API_BASE_URL = '/.netlify/functions';
 
 const getEmbeddings = async (input: string | string[]) => {
-  const response = await fetch(`${API_BASE_URL}/api/embeddings`, {
+  const response = await fetch(`${API_BASE_URL}/embeddings`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
