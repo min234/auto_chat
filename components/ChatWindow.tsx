@@ -63,7 +63,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ messages, onSendMessage, isLoad
         ) : null}
         <div className="flex flex-col space-y-5">
           {messages.map((msg) => (
-            <ChatMessageItem key={msg.id} message={msg} />
+            <ChatMessageItem message={msg} />
           ))}
           {isLoading && messages.length > 0 && <ChatMessageItem key="loading" message={{id: 0, role: 'bot', content: '...'}} isLoading={true} />}
           {isLoading && messages.length === 0 && !initError && (
