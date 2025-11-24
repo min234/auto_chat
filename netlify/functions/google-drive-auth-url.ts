@@ -2,6 +2,7 @@ import type { HandlerContext } from "@netlify/functions";
 import { google } from 'googleapis';
 
 export default async (request: Request, context: HandlerContext) => {
+  console.log('--- GOOGLE DRIVE AUTH URL FUNCTION INVOCATION ---');
   if (request.method !== 'GET') {
     return new Response('Method Not Allowed', { status: 405 });
   }
