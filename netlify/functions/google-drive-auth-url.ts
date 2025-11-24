@@ -1,9 +1,9 @@
-import { Handler } from '@netlify/functions';
+import type { HandlerContext } from "@netlify/functions";
 import { google } from 'googleapis';
 
-const handler: Handler = async (event, context) => {
-  if (event.httpMethod !== 'GET') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+export default async (request: Request, context: HandlerContext) => {
+  if (request.method !== 'GET') {
+    return new Response('Method Not Allowed', { status: 405 });
   }
 
   try {
@@ -31,17 +31,15 @@ const handler: Handler = async (event, context) => {
     // --- DEBUGGING LOG ---
     console.log('[DEBUG] Generated Authorize URL:', authorizeUrl);
 
-    return {statusCode: 302,
-  headers: { Location: authorizeUrl },
-
-    };
+    return new Response(JSON.stringify({ url: authorizeUrl }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
   } catch (error) {
     console.error('Error in /netlify/functions/google-drive-auth-url:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to generate auth URL' }),
-    };
+    return new Response(JSON.stringify({ error: 'Failed to generate auth URL' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 };
-
-export { handler };

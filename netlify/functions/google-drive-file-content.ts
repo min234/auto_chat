@@ -1,19 +1,19 @@
-import { Handler } from '@netlify/functions';
+import type { HandlerContext } from "@netlify/functions";
 import { google } from 'googleapis';
 
-const handler: Handler = async (event, context) => {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+export default async (request: Request, context: HandlerContext) => {
+  if (request.method !== 'POST') {
+    return new Response('Method Not Allowed', { status: 405 });
   }
 
-  const authHeader = event.headers.authorization;
+  const authHeader = request.headers.get('authorization');
   const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
 
   if (!token) {
-    return {
-      statusCode: 401,
-      body: JSON.stringify({ error: 'Not authenticated with Google Drive. Access token is missing.' }),
-    };
+    return new Response(JSON.stringify({ error: 'Not authenticated with Google Drive. Access token is missing.' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 
   // Create a temporary OAuth2 client with the user's token
@@ -24,7 +24,7 @@ const handler: Handler = async (event, context) => {
   const sheets = google.sheets({ version: 'v4', auth: tempOauth2Client });
 
   try {
-    const { fileId, mimeType } = JSON.parse(event.body || '{}');
+    const { fileId, mimeType } = await request.json();
 
     let content: string[] = []; // Always return an array of strings
     if (mimeType === "application/vnd.google-apps.spreadsheet") {
@@ -47,18 +47,15 @@ const handler: Handler = async (event, context) => {
         .filter(paragraph => paragraph.trim() !== '');
     }
 
-    return {
-      statusCode: 200,
+    return new Response(JSON.stringify({ content }), {
+      status: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content }),
-    };
+    });
   } catch (error) {
     console.error('Error fetching Google Drive file content:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to fetch file content from Google Drive.' }),
-    };
+    return new Response(JSON.stringify({ error: 'Failed to fetch file content from Google Drive.' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 };
-
-export { handler };

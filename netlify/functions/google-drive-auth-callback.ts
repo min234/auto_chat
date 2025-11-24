@@ -1,4 +1,4 @@
-import { Handler } from '@netlify/functions';
+import type { HandlerContext } from "@netlify/functions";
 import { google } from 'googleapis';
 
 const oauth2Client = new google.auth.OAuth2(
@@ -7,19 +7,17 @@ const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_REDIRECT_URI
 );
 
-const handler: Handler = async (event, context) => {
-  if (event.httpMethod !== 'GET') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+export default async (request: Request, context: HandlerContext) => {
+  if (request.method !== 'GET') {
+    return new Response('Method Not Allowed', { status: 405 });
   }
 
   console.log('[/netlify/functions/google-drive-auth-callback] Received callback from Google.');
-  const code = event.queryStringParameters?.code;
+  const url = new URL(request.url);
+  const code = url.searchParams.get('code');
 
   if (!code) {
-    return {
-      statusCode: 400,
-      body: 'Missing authorization code.',
-    };
+    return new Response('Missing authorization code.', { status: 400 });
   }
 
   try {
@@ -31,10 +29,7 @@ const handler: Handler = async (event, context) => {
     // The targetOrigin needs to be dynamic based on the Netlify deployment URL
     const targetOrigin = process.env.NETLIFY_SITE_URL || 'http://localhost:3000';
 
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'text/html' },
-      body: `
+    const htmlResponse = `
         <!DOCTYPE html>
         <html>
         <head>
@@ -51,15 +46,14 @@ const handler: Handler = async (event, context) => {
           <p>Authentication successful! You can close this window.</p>
         </body>
         </html>
-      `,
-    };
+      `;
+
+    return new Response(htmlResponse, {
+      status: 200,
+      headers: { 'Content-Type': 'text/html' },
+    });
   } catch (error) {
     console.error('Error during Google OAuth callback:', error);
-    return {
-      statusCode: 500,
-      body: 'Authentication failed.',
-    };
+    return new Response('Authentication failed.', { status: 500 });
   }
 };
-
-export { handler };

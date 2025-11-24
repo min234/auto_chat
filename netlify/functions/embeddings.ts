@@ -1,4 +1,4 @@
-import { Handler } from '@netlify/functions';
+import type { HandlerContext } from "@netlify/functions";
 import OpenAI from 'openai';
 
 // Initialize OpenAI outside the handler for better performance (cold starts)
@@ -6,19 +6,19 @@ const openai = new OpenAI({
   apiKey: process.env.GPT40_API_KEY,
 });
 
-const handler: Handler = async (event, context) => {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+export default async (request: Request, context: HandlerContext) => {
+  if (request.method !== 'POST') {
+    return new Response('Method Not Allowed', { status: 405 });
   }
 
   try {
-    const { input } = JSON.parse(event.body || '{}');
+    const { input } = await request.json();
 
     if (!input) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'Input is required' }),
-      };
+      return new Response(JSON.stringify({ error: 'Input is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
     const embeddingResponse = await openai.embeddings.create({
@@ -26,18 +26,15 @@ const handler: Handler = async (event, context) => {
       input: input,
     });
 
-    return {
-      statusCode: 200,
+    return new Response(JSON.stringify(embeddingResponse), {
+      status: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(embeddingResponse),
-    };
+    });
   } catch (error) {
     console.error('Error in /netlify/functions/embeddings:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to generate embeddings' }),
-    };
+    return new Response(JSON.stringify({ error: 'Failed to generate embeddings' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 };
-
-export { handler };

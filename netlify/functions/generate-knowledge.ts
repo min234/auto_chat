@@ -1,23 +1,23 @@
-import { Handler } from '@netlify/functions';
+import type { HandlerContext } from "@netlify/functions";
 import OpenAI from 'openai';
 
 const openai = new OpenAI({
   apiKey: process.env.GPT40_API_KEY,
 });
 
-const handler: Handler = async (event, context) => {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+export default async (request: Request, context: HandlerContext) => {
+  if (request.method !== 'POST') {
+    return new Response('Method Not Allowed', { status: 405 });
   }
 
   try {
-    const { text, prompt } = JSON.parse(event.body || '{}');
+    const { text, prompt } = await request.json();
 
     if (!text || !prompt) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'Text and prompt are required' }),
-      };
+      return new Response(JSON.stringify({ error: 'Text and prompt are required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
     const chatCompletion = await openai.chat.completions.create({
@@ -26,18 +26,15 @@ const handler: Handler = async (event, context) => {
       response_format: { type: "json_object" },
     });
 
-    return {
-      statusCode: 200,
+    return new Response(JSON.stringify(chatCompletion), {
+      status: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(chatCompletion),
-    };
+    });
   } catch (error) {
     console.error('Error in /netlify/functions/generate-knowledge:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to generate knowledge' }),
-    };
+    return new Response(JSON.stringify({ error: 'Failed to generate knowledge' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 };
-
-export { handler };
