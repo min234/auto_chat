@@ -31,10 +31,9 @@ const handler: Handler = async (event, context) => {
     // --- DEBUGGING LOG ---
     console.log('[DEBUG] Generated Authorize URL:', authorizeUrl);
 
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url: authorizeUrl }),
+    return {statusCode: 302,
+  headers: { Location: authorizeUrl },
+
     };
   } catch (error) {
     console.error('Error in /netlify/functions/google-drive-auth-url:', error);
