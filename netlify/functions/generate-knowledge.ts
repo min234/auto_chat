@@ -5,6 +5,8 @@ const openai = new OpenAI({
   apiKey: process.env.GPT40_API_KEY,
 });
 
+console.log(openai)
+
 export default async (request: Request, context: HandlerContext) => {
   if (request.method !== 'POST') {
     return new Response('Method Not Allowed', { status: 405 });
