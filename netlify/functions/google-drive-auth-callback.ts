@@ -28,7 +28,7 @@ export default async (request: Request, context: HandlerContext) => {
 
     // Send tokens to the client via postMessage
     // The targetOrigin needs to be dynamic based on the Netlify deployment URL
-    const targetOrigin = process.env.NETLIFY_SITE_URL || 'http://localhost:3000';
+    const targetOrigin = new URL(request.url).origin;
 
     const htmlResponse = `
         <!DOCTYPE html>
