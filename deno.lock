@@ -15,22 +15,22 @@
         "npm:@netlify/functions@^5.1.0",
         "npm:@types/cors@^2.8.19",
         "npm:@types/express-session@^1.18.2",
-        "npm:@types/express@^5.0.5",
+        "npm:@types/express@^4.17.13",
         "npm:@types/gapi@^0.0.47",
         "npm:@types/google.maps@^3.58.1",
         "npm:@types/node@^22.14.0",
-        "npm:@vitejs/plugin-react@5",
+        "npm:@vitejs/plugin-react@4",
         "npm:cors@^2.8.5",
         "npm:dotenv@^17.2.3",
         "npm:express-session@^1.18.0",
-        "npm:express@^5.1.0",
+        "npm:express@^4.17.1",
         "npm:googleapis@166",
         "npm:idb@^8.0.3",
         "npm:openai@^6.9.0",
-        "npm:react-dom@^19.2.0",
-        "npm:react@^19.2.0",
+        "npm:react-dom@^18.2.0",
+        "npm:react@^18.2.0",
         "npm:typescript@~5.8.2",
-        "npm:vite@^6.2.0"
+        "npm:vite@^7.2.4"
       ]
     }
   }

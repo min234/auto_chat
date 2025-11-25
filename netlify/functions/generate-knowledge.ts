@@ -3,6 +3,7 @@ import OpenAI from 'openai';
 
 const openai = new OpenAI({
   apiKey: process.env.GPT40_API_KEY,
+  baseURL: 'https://api.openai.com/v1',
 });
 
 console.log(openai)

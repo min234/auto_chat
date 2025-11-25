@@ -4,6 +4,7 @@ import OpenAI from 'openai';
 // Initialize OpenAI outside the handler for better performance (cold starts)
 const openai = new OpenAI({
   apiKey: process.env.GPT40_API_KEY,
+  baseURL: 'https://api.openai.com/v1',
 });
 
 export default async (request: Request, context: HandlerContext) => {
