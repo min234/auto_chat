@@ -136,14 +136,7 @@ export const generateKnowledgeBaseJSON = async (rawText: string): Promise<Intent
         throw new Error(`Failed to generate knowledge: ${errorBody.error || response.statusText}`);
     }
     
-    const completion = await response.json();
-    const content = completion.choices[0].message.content;
-
-    if (!content) {
-        throw new Error("Empty response from knowledge generation endpoint");
-    }
-    
-    const parsed = JSON.parse(content);
+    const parsed = await response.json();
     const newItems = parsed.knowledgeItems || [];
     
     if (!Array.isArray(newItems)) {

@@ -26,7 +26,16 @@ export default async (request: Request, context: HandlerContext) => {
       response_format: { type: "json_object" },
     });
 
-    return new Response(JSON.stringify(chatCompletion), {
+    const content = chatCompletion.choices[0]?.message?.content;
+
+    if (!content) {
+      return new Response(JSON.stringify({ error: 'Empty content from OpenAI' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    return new Response(content, {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
